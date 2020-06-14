@@ -1,6 +1,12 @@
 <?php
 //创建Server对象，监听 127.0.0.1:9501端口
 $serv = new Swoole\Server("127.0.0.1", 9501);
+
+$serv->set([
+    'worker_num' => 4 , // worker进程数 cpu 1-4
+    'max_request' => 10000,
+]);
+
 /*
  *服务器可以同时被成千上万个客户端连接，$fd 就是客户端连接的唯一标识符
  *调用 $server->send() 方法向客户端连接发送数据，参数就是 $fd 客户端标识符
