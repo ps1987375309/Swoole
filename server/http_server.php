@@ -22,9 +22,7 @@ $http->on('request', function($request, $response) {
         'header:' => $request->header,
     ];
 
-    swoole_async_writefile(__DIR__."/access.log", json_encode($content).PHP_EOL, function($filename){
-        // todo
-    }, FILE_APPEND);
+    Swoole\Coroutine\System::writeFile(__DIR__."/access.log", json_encode($content).PHP_EOL, FILE_APPEND);
     $response->cookie("singwa", "xsssss", time() + 1800);
     $response->end("sss". json_encode($request->get));
 });
