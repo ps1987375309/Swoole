@@ -62,6 +62,25 @@ class Predis {
 
         return $this->redis->get($key);
     }
+    /**
+     * 添加
+     * @param unknown $key
+     * @param unknown $value
+     * @return mixed
+     */
+    public function sadd($key,$value) {
+        return $this->redis->Sadd($key,$value);
+    }
+    
+    /**
+     * 删除
+     * @param unknown $key
+     * @param unknown $value
+     * @return int
+     */
+    public function srem($key,$value) {
+        return $this->redis->Srem($key,$value);
+    }
 
     /**
      * @param $key

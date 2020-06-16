@@ -1,0 +1,24 @@
+以下需求都是编译安装
+
+1.环境需求
+nginx 1.16.1
+swoole 4.5
+php 7.2.31
+redis 6.0.5
+
+2.PHP扩展
+redis
+curl
+swoole
+
+3.运行相关
+项目里面的文件都是在终端调试，开启服务需要直接使用php命令，如：
+php http_server.php
+同时不要忘记开启redis服务和连接redis服务调试，文件目录redis安装目录-》src。命令：
+./redis-server    //开启服务
+./redis-cli       //连接服务
+
+
+server/http_server.php 是验证码登录服务
+server/http.php 是优化后的验证码登录服务
+server/ws.php 是赛事直播服务

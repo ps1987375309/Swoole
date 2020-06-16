@@ -6,6 +6,13 @@ class Live
 {
 
     public function push() {
+        
+        $client = Predis::getInstance()->sMembers(config("redis.live_game_key"));
+        var_dump($client);
+        
+        
+        
+        
         if(empty($_GET)) {
             return Util::show(config('code.error'), 'error');
         }  // admin

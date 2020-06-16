@@ -1,21 +1,15 @@
 <?php
-/**
- * HTTP 优化 基础类库
- * User: singwa
- * Date: 18/3/2
- * Time: 上午12:34
- */
 
-class Http {
+class Ws {
 
     CONST HOST = "0.0.0.0";
     CONST PORT = 8811;
 
-    public $http = null;
+    public $ws = null;
     public function __construct() {
-        $this->http = new swoole_http_server(self::HOST, self::PORT);
+        $this->ws = new swoole_websocket_server(self::HOST, self::PORT);
 
-        $this->http->set(
+        $this->ws->set(
             [
                 'enable_static_handler' => true,    //开启静态资源目录
                 'document_root' => "/root/workspace/Swoole/thinkphp/public/static",  //设置静态资源目录
@@ -23,13 +17,38 @@ class Http {
                 'task_worker_num' => 4,
             ]
         );
-        $this->http->on("workerstart", [$this, 'onWorkerStart']);
-        $this->http->on("request", [$this, 'onRequest']);
-        $this->http->on("task", [$this, 'onTask']);
-        $this->http->on("finish", [$this, 'onFinish']);
-        $this->http->on("close", [$this, 'onClose']);
+        
+        $this->ws->on("open", [$this, 'onOpen']);
+        $this->ws->on("message", [$this, 'onMessage']);
+        $this->ws->on("workerstart", [$this, 'onWorkerStart']);
+        $this->ws->on("request", [$this, 'onRequest']);
+        $this->ws->on("task", [$this, 'onTask']);
+        $this->ws->on("finish", [$this, 'onFinish']);
+        $this->ws->on("close", [$this, 'onClose']);
 
-        $this->http->start();
+        $this->ws->start();
+    }
+    
+    
+    /**
+     * 监听ws连接事件
+     * @param $ws
+     * @param $request
+     */
+    public function onOpen($ws, $request) {
+        \app\common\lib\redis\Predis::getInstance()->sadd(config("redis.live_game_key"),$request->fd);
+        var_dump($request->fd);
+        
+    }
+    
+    /**
+     * 监听ws消息事件
+     * @param $ws
+     * @param $frame
+     */
+    public function onMessage($ws, $frame) {
+        echo "ser-push-message:{$frame->data}\n";    //接收客户端发送的数据，并输出在终端
+        $ws->push($frame->fd, "server-push:".date("Y-m-d H:i:s"));
     }
     
     /**
@@ -63,6 +82,13 @@ class Http {
             }
         }
         
+        $_FILES = [];
+        if(isset($request->files)) {
+            foreach($request->files as $k => $v) {
+                $_FILES[$k] = $v;
+            }
+        }
+        
         $_GET = [];
         if(isset($request->get)) {
             foreach($request->get as $k => $v) {
@@ -84,7 +110,7 @@ class Http {
             }
         }
         
-        $_POST['http_server'] = $this->http;
+        $_POST['http_server'] = $this->ws;
         
         //开启ob
         ob_start();
@@ -132,8 +158,9 @@ class Http {
      * @param $fd
      */
     public function onClose($ws, $fd) {
+        \app\common\lib\redis\Predis::getInstance()->srem(config("redis.live_game_key"),$fd);
         echo "clientid:{$fd}\n";
     }
 }
 
-$obj = new Http();
+$obj = new Ws();
