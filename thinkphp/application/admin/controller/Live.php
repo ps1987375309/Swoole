@@ -7,12 +7,6 @@ class Live
 
     public function push() {
         
-        $client = Predis::getInstance()->sMembers(config("redis.live_game_key"));
-        var_dump($client);
-        
-        
-        
-        
         if(empty($_GET)) {
             return Util::show(config('code.error'), 'error');
         }  // admin
@@ -36,6 +30,13 @@ class Live
             'content' => !empty($_GET['content']) ? $_GET['content'] : '',
             'image' => !empty($_GET['image']) ? $_GET['image'] : '',
         ];
+        
+        //         $client = Predis::getInstance()->sMembers(config("redis.live_game_key"));
+        //         var_dump($client);
+        //         foreach ($client as $fd){
+        //             $_POST['http_server']->push($fd,json_encode($data));
+        //         }
+        
         //print_r($_GET);
         // 获取连接的用户
         // 赛况的基本信息入库   2、数据组织好 push到直播页面
