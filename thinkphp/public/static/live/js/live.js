@@ -4,13 +4,13 @@ var websocket = new WebSocket(wsUrl);
 
 //实例对象的onopen属性
 websocket.onopen = function(evt) {
-  console.log("conected-swoole-success");
+  console.log("conected-swoole-success_live");
 }
 
 // 实例化 onmessage
 websocket.onmessage = function(evt) {
-  push(evt.data);
-  console.log("ws-server-return-data:" + evt.data);
+  push_a(evt.data);
+  console.log("ws-server-return-data-live:" + evt.data);
 }
 
 //onclose
@@ -24,7 +24,7 @@ websocket.onerror = function(evt, e) {
 }
 
 
-function push(data){
+function push_a(data){
 	data =JSON.parse(data);
 	html = '<div class="frame">';
 		html += '<h3 class="frame-header">';

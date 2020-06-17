@@ -30,18 +30,36 @@ class Live
             'content' => !empty($_GET['content']) ? $_GET['content'] : '',
             'image' => !empty($_GET['image']) ? $_GET['image'] : '',
         ];
+        
+        
+        $server = $_POST['http_server'];
+        foreach($server->ports[0]->connections as $fd) {
+            var_dump($fd);
+            if ($fd > 2) { //测试时系统默认会默认生产1,2   具体原因不详
+                $server->push($fd, json_encode($data));
+            }
+        }
+        
 
+ /*
+  * =================================以下功能正常======================================================
+  */           
+        
+//         $client = Predis::getInstance()->sMembers(config("redis.live_game_key"));
+//         foreach ($client as $fd){
+//             $_POST['http_server']->push($fd,json_encode($data));
+//         }
 
 //         print_r($_GET);
         // 获取连接的用户
         // 赛况的基本信息入库   2、数据组织好 push到直播页面
-        $taskData = [
-            'method' => 'pushLive',
-            'data' => $data
-        ];
-        $_POST['http_server']->task($taskData);
+//         $taskData = [
+//             'method' => 'pushLive',
+//             'data' => $data
+//         ];
+//         $_POST['http_server']->task($taskData);
 
-        return Util::show(config('code.success'), 'ok');
+//         return Util::show(config('code.success'), 'ok');
     }
 
 }

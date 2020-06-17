@@ -22,3 +22,9 @@ php http_server.php
 server/http_server.php 是验证码登录服务
 server/http.php 是优化后的验证码登录服务
 server/ws.php 是赛事直播服务
+
+现在默认使用的是方案三
+以下使用时改成ws.php   Live.php
+方案一 ws1.php   Live1.php   一套配合   8811和8812都是调用swoole自身的连接获取（推荐）
+方案二 ws2.php   Live2.php   一套配合   8811直播使用存redis的方法  8812都是调用swoole自身的连接获取
+方案三 ws2.php   Live3.php   一套配合   8811直播使用存redis+swoole异步任务的方法  8812都是调用swoole自身的连接获取

@@ -8,11 +8,7 @@ class Ws {
 
     public $ws = null;
     public function __construct() {
-        /*
-         * 此套为8811端口客户连接存在redis中
-         * 测试显示new swoole_websocket_server不能添加第三个参数SWOOLE_BASE，否则无法运行
-         */
-        $this->ws = new swoole_websocket_server(self::HOST, self::PORT);
+        $this->ws = new swoole_websocket_server(self::HOST, self::PORT, SWOOLE_BASE);
         $this->ws->listen(self::HOST, self::CHART_PORT,SWOOLE_SOCK_TCP);
         $this->ws->set(
             [
@@ -42,12 +38,9 @@ class Ws {
      */
     public function onOpen($ws, $request) {
         var_dump($request->server['server_port'],$request->fd);
-        /*
-         * 必须做这个if判断，否则redis中会存储8812聊天端口的客户数据进来，导致直播数据发送到聊天窗口端口上，出现数据交叉窜乱
-         */
         if ($request->server['server_port'] == self::PORT) {
-            \app\common\lib\redis\Predis::getInstance()->sadd(config("redis.live_game_key"),$request->fd);
         }
+        \app\common\lib\redis\Predis::getInstance()->sadd(config("redis.live_game_key"),$request->fd);
 
         
     }
